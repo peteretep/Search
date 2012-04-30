@@ -1,13 +1,16 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -19,6 +22,7 @@ public class Gooey implements ActionListener
 	JTextField input;
 	JFileChooser fileChooser;
 	JButton fileButton;
+	JButton clearButton;
 	JTextArea results;
 	static FileIndexer fileIndexer;
 	
@@ -44,6 +48,12 @@ public class Gooey implements ActionListener
 		fileButton.addActionListener(this);
 		totalGUI.add(fileButton);
 		
+		clearButton=new JButton("Clear");
+		clearButton.setSize(100,30);
+		clearButton.setLocation(20,100);
+		clearButton.addActionListener(this);
+		totalGUI.add(clearButton);
+		
 		results=new JTextArea(5,30);
 		results.setSize(300, 100);
 		results.setLocation(20,150);
@@ -67,31 +77,57 @@ public class Gooey implements ActionListener
 		// adds them to a list to print out.
 		if (e.getSource()==searchButton)
 		{
-			//creates a list of files with this word in it
-			List<String> printlist = fileIndexer.index.get(input.getText());
-		
-		
-			for (int i=0;i<printlist.size();i++)
+			Scanner sc=new Scanner(input.getText());
+			// Iterates over the searchTerms
+			List<String> printlist=new ArrayList<String>();
+			while (sc.hasNext())
+			{
+				//creates a list of files with this word in it
+			//	List<Results> resultlist = new ArrayList<Results>();
+				String searchTerm=sc.next();
+				System.out.println(fileIndexer.index.get(searchTerm));
+				
+				printlist.addAll(fileIndexer.index.get(searchTerm));
+				
+			
+			/*	for(Iterator<String> plit=printlist.iterator();plit.hasNext();)
+				{
+					Results res = new Results(plit.next());
+					resultlist.add(res);
+				}
+				
+				*/
+			}
+			HashMap<String, Integer> resultMap=new HashMap<String, Integer>();
+			for (String fl : printlist)
 			{
 				
-				results.append(printlist.get(i)+"\n");
 				
-			}
+				int wordsInFile = Collections.frequency(printlist, fl);
+				resultMap.put(fl, wordsInFile);
+				results.append(fl+" has " + wordsInFile + " search terms in it\n");
+			} 
 			
+			results.append(resultMap.keySet() + " : " + resultMap.values());
 		}
 		
 		// file chooser
 		if(e.getSource()==fileButton)
 		{
-			fileChooser=new JFileChooser();
+			fileChooser=new JFileChooser("/home/peter/workspace/Search");
 			//enable multiple selections
 			fileChooser.setMultiSelectionEnabled(true);
 			fileChooser.showOpenDialog(searchButton);
 			
 			File[] files=fileChooser.getSelectedFiles();
 			fileIndexer=new FileIndexer(files);
+			
 		}
-		
+		// clear the results area
+		if(e.getSource()==clearButton)
+		{
+			results.setText("");
+		}
 		
 	}
 	

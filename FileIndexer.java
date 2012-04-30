@@ -16,7 +16,7 @@ public class FileIndexer
 	{
 		/*open the file
 		 * read the file word by word
-		 * for each word, addWordsToIndex()
+		 * for each word, 
 		 * 
 		
 		 */
