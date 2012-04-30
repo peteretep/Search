@@ -41,7 +41,7 @@ public class FileIndexer
 					fileList.add(files[i].getAbsolutePath());
 				}
 				
-				System.out.println(index.keySet());
+				
 			
 			}
 			catch (FileNotFoundException e) 
@@ -50,7 +50,7 @@ public class FileIndexer
 				e.printStackTrace();
 			}
 		}
-		
+		System.out.println(index.keySet() + " : " + index.values());
 	}
 	
 	

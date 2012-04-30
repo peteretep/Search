@@ -44,7 +44,7 @@ public class Gooey implements ActionListener
 		fileButton.addActionListener(this);
 		totalGUI.add(fileButton);
 		
-		results=new JTextArea("hello",5,30);
+		results=new JTextArea(5,30);
 		results.setSize(300, 100);
 		results.setLocation(20,150);
 		results.setCaretPosition(results.getDocument().getLength());
@@ -67,7 +67,7 @@ public class Gooey implements ActionListener
 		// adds them to a list to print out.
 		if (e.getSource()==searchButton)
 		{
-			
+			//creates a list of files with this word in it
 			List<String> printlist = fileIndexer.index.get(input.getText());
 		
 		
