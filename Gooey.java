@@ -1,21 +1,25 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 
 public class Gooey implements ActionListener
 {
-	JButton search;
+	JButton searchButton;
 	JTextField input;
-	JFileChooser chooser;
+	JFileChooser fileChooser;
 	JButton fileButton;
+	JTextArea results;
 	static FileIndexer fileIndexer;
 	
 	public JPanel createContentPane() 
@@ -28,11 +32,11 @@ public class Gooey implements ActionListener
 		input.setSize(150,30);
 		totalGUI.add(input);
 		
-		search=new JButton("Search");
-		search.setSize(100,30);
-		search.setLocation(200, 40);
-		search.addActionListener(this);
-		totalGUI.add(search);
+		searchButton=new JButton("Search");
+		searchButton.setSize(100,30);
+		searchButton.setLocation(200, 40);
+		searchButton.addActionListener(this);
+		totalGUI.add(searchButton);
 		
 		fileButton=new JButton("Pick Files");
 		fileButton.setSize(100,30);
@@ -40,25 +44,55 @@ public class Gooey implements ActionListener
 		fileButton.addActionListener(this);
 		totalGUI.add(fileButton);
 		
+		results=new JTextArea("hello",5,30);
+		results.setSize(300, 100);
+		results.setLocation(20,150);
+		results.setCaretPosition(results.getDocument().getLength());
+		results.setEditable(true);
+		totalGUI.add(results);
+	//	JScrollPane resultsScrollPane=new JScrollPane(results);
+	//	totalGUI.add(resultsScrollPane);
+		
+		
+		
 		return totalGUI;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
-		// TODO Auto-generated method stub
-		
-		if (e.getSource()==search)
+		// On click search button
+		//finds the key from the input text box
+		// and gets the values associated with that key
+		// adds them to a list to print out.
+		if (e.getSource()==searchButton)
 		{
-			List<String> printlist = fileIndexer.index.get(input.getText());
 			
+			List<String> printlist = fileIndexer.index.get(input.getText());
+		
 		
 			for (int i=0;i<printlist.size();i++)
 			{
-				System.out.println(printlist.get(i));
+				
+				results.append(printlist.get(i)+"\n");
+				
 			}
 			
 		}
+		
+		// file chooser
+		if(e.getSource()==fileButton)
+		{
+			fileChooser=new JFileChooser();
+			//enable multiple selections
+			fileChooser.setMultiSelectionEnabled(true);
+			fileChooser.showOpenDialog(searchButton);
+			
+			File[] files=fileChooser.getSelectedFiles();
+			fileIndexer=new FileIndexer(files);
+		}
+		
+		
 	}
 	
 	public static void createAndShowGUI()
@@ -67,7 +101,7 @@ public class Gooey implements ActionListener
 		Gooey gui=new Gooey();
 		frame.setContentPane(gui.createContentPane());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(350,150);
+		frame.setSize(350,300);
 		frame.setVisible(true);
 	}
 	
@@ -79,7 +113,12 @@ public class Gooey implements ActionListener
             }
         });
 		
-		fileIndexer=new FileIndexer();
+	
+		
+	}
+	
+	public static void checkIfFileContainsWord(String word)
+	{
 		
 	}
 }

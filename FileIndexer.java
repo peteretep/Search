@@ -12,7 +12,7 @@ public class FileIndexer
 	
 	
 	
-	public FileIndexer()
+	public FileIndexer(File [] files)
 	{
 		/*open the file
 		 * read the file word by word
@@ -20,7 +20,7 @@ public class FileIndexer
 		 * 
 		
 		 */
-		String[] files=new String[]{"file1.txt","file2.txt","file3.txt"};
+		
 		
 		for(int i=0;i<files.length;i++)
 		{
@@ -28,7 +28,7 @@ public class FileIndexer
 			try 
 			{
 				
-				Scanner input = new Scanner(new File(files[i]));
+				Scanner input = new Scanner((files[i]));
 				// iterates through words
 				while (input.hasNext())
 				{
@@ -38,8 +38,10 @@ public class FileIndexer
 					{
 						index.put(word, (fileList=new ArrayList<String>()));
 					}
-					fileList.add(files[i]);
+					fileList.add(files[i].getAbsolutePath());
 				}
+				
+				System.out.println(index.keySet());
 			
 			}
 			catch (FileNotFoundException e) 
