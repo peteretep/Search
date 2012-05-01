@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class FileIndexer 
 {
-	static HashMap<String, List<String>> index=new HashMap<String, List<String>>();
+	HashMap<String, List<String>> index=new HashMap<String, List<String>>();
 	
 	
 	

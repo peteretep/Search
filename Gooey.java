@@ -1,22 +1,27 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 
-public class Gooey implements ActionListener
+public class Gooey implements ActionListener,  FocusListener
 {
 	JButton searchButton;
 	JTextField input;
@@ -24,6 +29,7 @@ public class Gooey implements ActionListener
 	JButton fileButton;
 	JButton clearButton;
 	JTextArea results;
+	JLabel resultsLabel;
 	static FileIndexer fileIndexer;
 	
 	public JPanel createContentPane() 
@@ -31,9 +37,10 @@ public class Gooey implements ActionListener
 		JPanel totalGUI=new JPanel();
 		totalGUI.setLayout(null);
 		
-		input=new JTextField(30);
+		input=new JTextField("Insert Search Terms",30);
 		input.setLocation(20,40);
 		input.setSize(150,30);
+		input.addFocusListener(this);
 		totalGUI.add(input);
 		
 		searchButton=new JButton("Search");
@@ -54,61 +61,85 @@ public class Gooey implements ActionListener
 		clearButton.addActionListener(this);
 		totalGUI.add(clearButton);
 		
+		resultsLabel=new JLabel("Files Containing Search Terms");
+		resultsLabel.setSize(300, 10);
+		resultsLabel.setLocation(20, 135);
+		totalGUI.add(resultsLabel);
+		
 		results=new JTextArea(5,30);
-		results.setSize(300, 100);
-		results.setLocation(20,150);
+		results.setWrapStyleWord(true);
 		results.setCaretPosition(results.getDocument().getLength());
 		results.setEditable(true);
-		totalGUI.add(results);
-	//	JScrollPane resultsScrollPane=new JScrollPane(results);
-	//	totalGUI.add(resultsScrollPane);
+		//totalGUI.add(results);
+		JScrollPane resultsScrollPane=new JScrollPane(results);
+		resultsScrollPane.setSize(300, 100);
+		resultsScrollPane.setLocation(20,150);
+		totalGUI.add(resultsScrollPane);
 		
 		
 		
 		return totalGUI;
 	}
+	 public void focusGained(FocusEvent e) 
+	 {
+		 
+			if (e.getSource()==input)
+	        {
+				
+	        	input.setText("");
+	        }
+	    }
 
+	    public void focusLost(FocusEvent e) 
+	    {
+	    }
+	    
 	@Override
 	public void actionPerformed(ActionEvent e) 
 	{
+		System.out.println(e.getActionCommand());
 		// On click search button
 		//finds the key from the input text box
 		// and gets the values associated with that key
 		// adds them to a list to print out.
 		if (e.getSource()==searchButton)
 		{
+			//Clears the results area
+			results.setText("");
+			
+			// Creates a list to hold the results of the search - files 
+			// containing the search terms.
+			List<String> resultList=new ArrayList<String>();
+			
 			Scanner sc=new Scanner(input.getText());
+			
 			// Iterates over the searchTerms
-			List<String> printlist=new ArrayList<String>();
 			while (sc.hasNext())
 			{
-				//creates a list of files with this word in it
-			//	List<Results> resultlist = new ArrayList<Results>();
 				String searchTerm=sc.next();
+				
+				//print the list of files that contain the searchterm to the console
 				System.out.println(fileIndexer.index.get(searchTerm));
 				
-				printlist.addAll(fileIndexer.index.get(searchTerm));
-				
-			
-			/*	for(Iterator<String> plit=printlist.iterator();plit.hasNext();)
-				{
-					Results res = new Results(plit.next());
-					resultlist.add(res);
-				}
-				
-				*/
+				//add each of the files containing the search term to the results list
+				resultList.addAll(fileIndexer.index.get(searchTerm));
 			}
-			HashMap<String, Integer> resultMap=new HashMap<String, Integer>();
-			for (String fl : printlist)
+			TreeMap<String, Integer> resultMap=new TreeMap<String, Integer>();
+			for (String fl : resultList)
 			{
-				
-				
-				int wordsInFile = Collections.frequency(printlist, fl);
+				int wordsInFile = Collections.frequency(resultList, fl);
 				resultMap.put(fl, wordsInFile);
-				results.append(fl+" has " + wordsInFile + " search terms in it\n");
 			} 
 			
-			results.append(resultMap.keySet() + " : " + resultMap.values());
+		    Iterator<String> iterator = resultMap.keySet().iterator();  
+		       
+		    while (iterator.hasNext()) {  
+		       String key = iterator.next().toString();  
+		       String value = resultMap.get(key).toString();  
+		       
+		       System.out.println(key + " " + value);
+		       results.append(key+"\n");
+		    } 
 		}
 		
 		// file chooser
@@ -149,12 +180,7 @@ public class Gooey implements ActionListener
             }
         });
 		
-	
 		
-	}
-	
-	public static void checkIfFileContainsWord(String word)
-	{
 		
 	}
 }
