@@ -50,7 +50,7 @@ public class FileIndexer
 				e.printStackTrace();
 			}
 		}
-		System.out.println(index.keySet() + " : " + index.values());
+	//	System.out.println(index.keySet() + " : " + index.values());
 	}
 	
 	
