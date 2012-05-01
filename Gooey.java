@@ -5,10 +5,14 @@ import java.awt.event.FocusListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
-import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -19,6 +23,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 
 public class Gooey implements ActionListener,  FocusListener
@@ -124,18 +130,23 @@ public class Gooey implements ActionListener,  FocusListener
 				//add each of the files containing the search term to the results list
 				resultList.addAll(fileIndexer.index.get(searchTerm));
 			}
-			TreeMap<String, Integer> resultMap=new TreeMap<String, Integer>();
+			
+			Map<String, Integer> unsortedMap=new HashMap<String, Integer>();
 			for (String fl : resultList)
 			{
 				int wordsInFile = Collections.frequency(resultList, fl);
-				resultMap.put(fl, wordsInFile);
+				unsortedMap.put(fl, wordsInFile);
 			} 
 			
-		    Iterator<String> iterator = resultMap.keySet().iterator();  
+			//Sort Results
+			Map<String, Integer> sortedMap= sortByComparator(unsortedMap);
+			
+			
+		    Iterator<String> iterator = sortedMap.keySet().iterator();  
 		       
 		    while (iterator.hasNext()) {  
 		       String key = iterator.next().toString();  
-		       String value = resultMap.get(key).toString();  
+		       String value = sortedMap.get(key).toString();  
 		       
 		       System.out.println(key + " " + value);
 		       results.append(key+"\n");
@@ -145,7 +156,7 @@ public class Gooey implements ActionListener,  FocusListener
 		// file chooser
 		if(e.getSource()==fileButton)
 		{
-			fileChooser=new JFileChooser("/home/peter/workspace/Search");
+			fileChooser=new JFileChooser("/home/peter/workspace/Search/testfiles/");
 			//enable multiple selections
 			fileChooser.setMultiSelectionEnabled(true);
 			fileChooser.showOpenDialog(searchButton);
@@ -162,6 +173,30 @@ public class Gooey implements ActionListener,  FocusListener
 		
 	}
 	
+	private static Map<String, Integer> sortByComparator(Map<String, Integer> unsortedMap)
+	{
+		// This code was adapted from www.mykyong.com/java/how-to-sort-a-map-in-java/
+		
+		List<Map> list = new LinkedList(unsortedMap.entrySet());
+		
+		Collections.sort(list, new Comparator<Map>()
+		{
+			public int compare (Map o1, Map o2)
+			{
+				return ((Comparable)((Map.Entry)(o2)).getValue()).compareTo(((Map.Entry)(o1)).getValue());
+			}
+		});
+		
+		//put list back into a map
+		Map<String, Integer> sortedMap=new LinkedHashMap<String, Integer>();
+		for (Iterator<Map> it=list.iterator(); it.hasNext();)
+		{
+			Map.Entry<String, Integer> entry=(Map.Entry<String, Integer>)it.next();
+			sortedMap.put(entry.getKey(),entry.getValue());
+		}
+		return sortedMap;
+	}
+	
 	public static void createAndShowGUI()
 	{
 		JFrame frame=new JFrame("Search");
@@ -170,17 +205,17 @@ public class Gooey implements ActionListener,  FocusListener
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(350,300);
 		frame.setVisible(true);
+		
 	}
 	
 	public static void main(String[] args)
-	{
+	{ 
 		SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createAndShowGUI();
             }
         });
-		
-		
-		
 	}
+	
+	
 }

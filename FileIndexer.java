@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 
-public class FileIndexer 
+public class FileIndexer 	
 {
 	HashMap<String, List<String>> index=new HashMap<String, List<String>>();
 	
@@ -14,6 +14,8 @@ public class FileIndexer
 	
 	public FileIndexer(File [] files)
 	{
+		long start=System.currentTimeMillis();
+		System.out.println(start);
 		/*open the file
 		 * read the file word by word
 		 * for each word, 
@@ -51,6 +53,13 @@ public class FileIndexer
 			}
 		}
 	//	System.out.println(index.keySet() + " : " + index.values());
+
+	
+		long finished=System.currentTimeMillis();
+		System.out.println(finished);
+		long indexTime=finished-start;
+		System.out.println(indexTime);
+
 	}
 	
 	
