@@ -78,7 +78,7 @@ public class Gooey implements ActionListener,  FocusListener
 		results.setEditable(true);
 		//totalGUI.add(results);
 		JScrollPane resultsScrollPane=new JScrollPane(results);
-		resultsScrollPane.setSize(300, 100);
+		resultsScrollPane.setSize(350, 100);
 		resultsScrollPane.setLocation(20,150);
 		totalGUI.add(resultsScrollPane);
 		
@@ -92,7 +92,7 @@ public class Gooey implements ActionListener,  FocusListener
 			if (e.getSource()==input)
 	        {
 				
-	        	input.setText("");
+	        	//input.setText("");
 	        }
 	    }
 
@@ -110,6 +110,7 @@ public class Gooey implements ActionListener,  FocusListener
 		// adds them to a list to print out.
 		if (e.getSource()==searchButton)
 		{
+			long start = System.currentTimeMillis();
 			//Clears the results area
 			results.setText("");
 			
@@ -151,12 +152,15 @@ public class Gooey implements ActionListener,  FocusListener
 		       System.out.println(key + " " + value);
 		       results.append(key+"\n");
 		    } 
+		    long finish=System.currentTimeMillis();
+		    long searchTime=finish-start;
+		    System.out.println("Search took " + searchTime + "ms");
 		}
 		
 		// file chooser
 		if(e.getSource()==fileButton)
 		{
-			fileChooser=new JFileChooser("/home/peter/workspace/Search/testfiles/");
+			fileChooser=new JFileChooser("/home/peter/workspace/Search/dictionary/");
 			//enable multiple selections
 			fileChooser.setMultiSelectionEnabled(true);
 			fileChooser.showOpenDialog(searchButton);
@@ -175,26 +179,33 @@ public class Gooey implements ActionListener,  FocusListener
 	
 	private static Map<String, Integer> sortByComparator(Map<String, Integer> unsortedMap)
 	{
-		// This code was adapted from www.mykyong.com/java/how-to-sort-a-map-in-java/
+		long start = System.nanoTime();
+		// This code was adapted from www.mkyong.com/java/how-to-sort-a-map-in-java/
 		
-		List<Map> list = new LinkedList(unsortedMap.entrySet());
+		List list = new LinkedList(unsortedMap.entrySet());
 		
-		Collections.sort(list, new Comparator<Map>()
+		Collections.sort(list, new Comparator()
 		{
-			public int compare (Map o1, Map o2)
+			public int compare (Object o1, Object o2)
 			{
 				return ((Comparable)((Map.Entry)(o2)).getValue()).compareTo(((Map.Entry)(o1)).getValue());
 			}
+
+			
 		});
 		
 		//put list back into a map
-		Map<String, Integer> sortedMap=new LinkedHashMap<String, Integer>();
-		for (Iterator<Map> it=list.iterator(); it.hasNext();)
+		Map sortedMap=new LinkedHashMap();
+		for (Iterator it=list.iterator(); it.hasNext();)
 		{
 			Map.Entry<String, Integer> entry=(Map.Entry<String, Integer>)it.next();
 			sortedMap.put(entry.getKey(),entry.getValue());
 		}
+		long finish= System.nanoTime();
+		long sortTime=finish-start;
+		System.out.println("Sorting took " + sortTime+ "ns");
 		return sortedMap;
+		
 	}
 	
 	public static void createAndShowGUI()
@@ -203,7 +214,7 @@ public class Gooey implements ActionListener,  FocusListener
 		Gooey gui=new Gooey();
 		frame.setContentPane(gui.createContentPane());
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(350,300);
+		frame.setSize(400,300);
 		frame.setVisible(true);
 		
 	}
